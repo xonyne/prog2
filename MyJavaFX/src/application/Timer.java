@@ -10,36 +10,39 @@ public class Timer implements Runnable {
 	Thread thread;
 
 	public Timer(Stopwatch stopwatch) {	
+		currentTime = 0;
+		startTime=0;
 		this.stopwatch = stopwatch;
-		reset();
+		thread = null;
 	}
 
 	@Override
 	public void run() {
 		while (true) {
-			if (thread.isInterrupted()) {
-				break;
-			}
 			currentTime = System.currentTimeMillis() - startTime;
-			Platform.runLater(() -> {
-				stopwatch.update(this.getTimeString());
-			});
+			updateGUI();
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
-				thread.interrupt();
+				thread = null;
+				updateGUI();
+				break;
+			} finally{
+				
 			}
 		}
 
+	}
+	
+	private void updateGUI(){
+		Platform.runLater(() -> {
+			stopwatch.update();
+		});
 	}
 
 	public void attach(Stopwatch stopwatch) {
 		this.stopwatch = stopwatch;
 	}
-
-//	public double getTime() {
-//		return time;
-//	}
 
 	public String getTimeString() {
 		long currentTimeMilli = (long) (currentTime % 1000);
@@ -49,15 +52,17 @@ public class Timer implements Runnable {
  	}
 
 	public boolean isRunning() {
-		return !this.thread.isInterrupted();
+		return thread != null;
 	}
 
 	public void reset() {
-		startTime = System.currentTimeMillis();
-		stopwatch.update(this.getTimeString());
+		currentTime = 0;
+		startTime = 0;
+		updateGUI();
 	}
 
 	public void start() {
+		currentTime = (currentTime == 0 ? startTime = System.currentTimeMillis():currentTime);
 		thread = new Thread(this);
 		thread.start();
 	}

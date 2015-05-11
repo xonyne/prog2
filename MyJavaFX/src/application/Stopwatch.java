@@ -20,17 +20,22 @@ public class Stopwatch extends BorderPane {
 	public Stopwatch() {
 		initializeGUI();
 		this.timer = new Timer(this);
+		update();
 	}
 
 	private void initializeGUI() {
-		final String cssDefault = "-fx-border-color: black;\n"
-				+ "-fx-border-insets: 5;\n" + "-fx-border-width: 3;\n"
+		final String cssDefault = "-fx-border-color: orange;\n"
+				+ "-fx-border-insets: 5;\n" + "-fx-border-width: 1;\n" + "-fx-font-size: 24px;"
 				+ "-fx-border-style: solid;\n";
 
 		lblTime = new Label("Time");
-		lblTime.setMaxWidth(Double.MAX_VALUE);
-		lblTime.setMaxHeight(Double.MAX_VALUE);
 		lblTime.setStyle(cssDefault);
+		
+		final HBox hBoxTime = new HBox(1);
+		hBoxTime.setMaxHeight(Double.MAX_VALUE);
+		hBoxTime.setMaxWidth(Double.MAX_VALUE);
+		hBoxTime.setAlignment(Pos.CENTER);
+		hBoxTime.getChildren().addAll(lblTime);
 
 		btnStart = new Button("Start");
 		btnStart.setMaxWidth(Double.MAX_VALUE);
@@ -48,20 +53,24 @@ public class Stopwatch extends BorderPane {
 		lblStatus.setMaxWidth(Double.MAX_VALUE);
 		BorderPane.setAlignment(lblStatus, Pos.BOTTOM_LEFT);
 
-		final HBox hBox = new HBox(5);
-		hBox.setAlignment(Pos.CENTER);
-		hBox.getChildren().addAll(btnStart, btnStop, btnReset);
+		final HBox hBoxButtons = new HBox(5);
+		hBoxButtons.setAlignment(Pos.CENTER);
+		hBoxButtons.getChildren().addAll(btnStart, btnStop, btnReset);
 		
-		final VBox vBox = new VBox(5);
-		vBox.setMaxWidth(Double.MAX_VALUE);
-		vBox.getChildren().addAll(hBox, lblStatus);
+		final VBox vBoxControlsAndStatus = new VBox(5);
+		vBoxControlsAndStatus.setMaxWidth(Double.MAX_VALUE);
+		vBoxControlsAndStatus.getChildren().addAll(hBoxButtons, lblStatus);
 
-		this.setCenter(lblTime);
-		this.setBottom(vBox);
+		this.setCenter(hBoxTime);
+		this.setBottom(vBoxControlsAndStatus);
 	}
 
-	public void update(String time) {
-		lblTime.setText(time);
+	public void update() {
+		lblTime.setText(timer.getTimeString());
+		btnStart.setDisable(timer.isRunning());
+		btnStop.setDisable(!timer.isRunning());
+		btnReset.setDisable(timer.isRunning());
+		lblStatus.setText(timer.isRunning() ? "Running...":"Stopped.");
 	}
 
 }
