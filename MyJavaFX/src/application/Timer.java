@@ -4,12 +4,14 @@ import javafx.application.Platform;
 
 public class Timer implements Runnable {
 
-	private double time;
+	private double currentTime;
+	private double startTime;
 	private Stopwatch stopwatch;
 	Thread thread;
 
-	public Timer() {
-		thread = new Thread(this);
+	public Timer(Stopwatch stopwatch) {	
+		this.stopwatch = stopwatch;
+		reset();
 	}
 
 	@Override
@@ -18,9 +20,9 @@ public class Timer implements Runnable {
 			if (thread.isInterrupted()) {
 				break;
 			}
-			time++;
+			currentTime = System.currentTimeMillis() - startTime;
 			Platform.runLater(() -> {
-				stopwatch.update();
+				stopwatch.update(this.getTimeString());
 			});
 			try {
 				Thread.sleep(1);
@@ -35,23 +37,28 @@ public class Timer implements Runnable {
 		this.stopwatch = stopwatch;
 	}
 
-	public double getTime() {
-		return time;
-	}
+//	public double getTime() {
+//		return time;
+//	}
 
 	public String getTimeString() {
-		return null;
-	}
+		long currentTimeMilli = (long) (currentTime % 1000);
+		long currentTimeSec = (long) (currentTime / 1000);
+		long currentTimeMin = (long)(currentTime / 1000 / 60);
+		return String.valueOf(currentTimeMin) + ":" + String.valueOf(currentTimeSec) + ":" + String.valueOf(currentTimeMilli);
+ 	}
 
 	public boolean isRunning() {
-		return false;
+		return !this.thread.isInterrupted();
 	}
 
 	public void reset() {
-		this.time = 0;
+		startTime = System.currentTimeMillis();
+		stopwatch.update(this.getTimeString());
 	}
 
 	public void start() {
+		thread = new Thread(this);
 		thread.start();
 	}
 

@@ -18,8 +18,8 @@ public class Stopwatch extends BorderPane {
 	private Button btnReset;
 
 	public Stopwatch() {
-		this.timer = new Timer();
 		initializeGUI();
+		this.timer = new Timer(this);
 	}
 
 	private void initializeGUI() {
@@ -38,11 +38,11 @@ public class Stopwatch extends BorderPane {
 		
 		btnStop = new Button("Stop");
 		btnStop.setMaxWidth(Double.MAX_VALUE);
-		btnStart.addEventHandler(ActionEvent.ACTION, event -> timer.stop());
+		btnStop.addEventHandler(ActionEvent.ACTION, event -> timer.stop());
 		
 		btnReset = new Button("Reset");
 		btnReset.setMaxWidth(Double.MAX_VALUE);
-		btnStart.addEventHandler(ActionEvent.ACTION, event -> timer.reset());
+		btnReset.addEventHandler(ActionEvent.ACTION, event -> timer.reset());
 		
 		lblStatus = new Label("Status");
 		lblStatus.setMaxWidth(Double.MAX_VALUE);
@@ -60,8 +60,8 @@ public class Stopwatch extends BorderPane {
 		this.setBottom(vBox);
 	}
 
-	public void update() {
-		lblTime.setText(timer.getTimeString());
+	public void update(String time) {
+		lblTime.setText(time);
 	}
 
 }
