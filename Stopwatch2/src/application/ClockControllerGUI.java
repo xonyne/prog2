@@ -14,9 +14,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class DigitalClock extends Stage implements Observer {
+public class ClockControllerGUI extends Stage implements Observer {
 	private Timer timer;
-	private ClockController controller;
+	private Controller controller;
 	private Label lblTime;
 	private Label lblStatus;
 	
@@ -24,7 +24,7 @@ public class DigitalClock extends Stage implements Observer {
 	private Button btnStop;
 	private Button btnReset;
 
-	public DigitalClock(Timer timer, ClockController controller) {
+	public ClockControllerGUI(Timer timer, Controller controller) {
 		this.timer = timer;
 		this.controller = controller;
 		timer.addObserver(this);

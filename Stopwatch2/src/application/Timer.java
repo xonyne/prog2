@@ -32,6 +32,10 @@ public class Timer extends Observable implements Runnable {
 
 	}
 	
+	public double getTime(){
+		return this.currentTime;
+	}
+	
 	public String getTimeString() {
 		long currentTimeMilli = (long) (currentTime % 1000);
 		long currentTimeSec = (long) (currentTime / 1000);

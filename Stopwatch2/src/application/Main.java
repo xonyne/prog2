@@ -22,9 +22,11 @@ public class Main extends Application {
 			//model
 			Timer timer = new Timer();
 			//controller
-			ClockController controller = new ClockController(timer);
+			Controller controller = new Controller(timer);
 			//views
-			new DigitalClock(timer, controller);
+			new ClockControllerGUI(timer, controller);
+			new ClockControllerGUI(timer, controller);
+			new ConsoleGUI(timer,controller);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

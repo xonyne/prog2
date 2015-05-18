@@ -1,10 +1,10 @@
 package application;
 
-public class ClockController {
+public class Controller {
 	
 	Timer timer;
 	
-	public ClockController(Timer timer) {
+	public Controller(Timer timer) {
 		this.timer=timer;
 	}
 
