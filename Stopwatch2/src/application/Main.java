@@ -19,11 +19,12 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			final Stopwatch stopwatch = new Stopwatch();
-			Scene scene = new Scene(stopwatch);
-			primaryStage.setTitle("Stopwatch");
-			primaryStage.setScene(scene);
-			primaryStage.show();
+			//model
+			Timer timer = new Timer();
+			//controller
+			ClockController controller = new ClockController(timer);
+			//views
+			new DigitalClock(timer, controller);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

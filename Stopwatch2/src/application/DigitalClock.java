@@ -1,15 +1,22 @@
 package application;
 
+import java.util.Observable;
+import java.util.Observer;
+
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-public class Stopwatch extends BorderPane {
+public class DigitalClock extends Stage implements Observer {
 	private Timer timer;
+	private ClockController controller;
 	private Label lblTime;
 	private Label lblStatus;
 	
@@ -17,10 +24,11 @@ public class Stopwatch extends BorderPane {
 	private Button btnStop;
 	private Button btnReset;
 
-	public Stopwatch() {
+	public DigitalClock(Timer timer, ClockController controller) {
+		this.timer = timer;
+		this.controller = controller;
+		timer.addObserver(this);
 		initializeGUI();
-		this.timer = new Timer(this);
-		update();
 	}
 
 	private void initializeGUI() {
@@ -31,6 +39,8 @@ public class Stopwatch extends BorderPane {
 		lblTime = new Label("Time");
 		lblTime.setStyle(cssDefault);
 		
+		BorderPane borderPane = new BorderPane();
+		
 		final HBox hBoxTime = new HBox(1);
 		hBoxTime.setMaxHeight(Double.MAX_VALUE);
 		hBoxTime.setMaxWidth(Double.MAX_VALUE);
@@ -39,15 +49,15 @@ public class Stopwatch extends BorderPane {
 
 		btnStart = new Button("Start");
 		btnStart.setMaxWidth(Double.MAX_VALUE);
-		btnStart.addEventHandler(ActionEvent.ACTION, event -> timer.start());
+		btnStart.addEventHandler(ActionEvent.ACTION, event -> controller.start());
 		
 		btnStop = new Button("Stop");
 		btnStop.setMaxWidth(Double.MAX_VALUE);
-		btnStop.addEventHandler(ActionEvent.ACTION, event -> timer.stop());
+		btnStop.addEventHandler(ActionEvent.ACTION, event -> controller.stop());
 		
 		btnReset = new Button("Reset");
 		btnReset.setMaxWidth(Double.MAX_VALUE);
-		btnReset.addEventHandler(ActionEvent.ACTION, event -> timer.reset());
+		btnReset.addEventHandler(ActionEvent.ACTION, event -> controller.reset());
 		
 		lblStatus = new Label("Status");
 		lblStatus.setMaxWidth(Double.MAX_VALUE);
@@ -61,16 +71,21 @@ public class Stopwatch extends BorderPane {
 		vBoxControlsAndStatus.setMaxWidth(Double.MAX_VALUE);
 		vBoxControlsAndStatus.getChildren().addAll(hBoxButtons, lblStatus);
 
-		this.setCenter(hBoxTime);
-		this.setBottom(vBoxControlsAndStatus);
+		borderPane.setCenter(hBoxTime);
+		borderPane.setBottom(vBoxControlsAndStatus);
+		this.setScene(new Scene(borderPane));
+		this.show();
 	}
 
-	public void update() {
-		lblTime.setText(timer.getTimeString());
-		btnStart.setDisable(timer.isRunning());
-		btnStop.setDisable(!timer.isRunning());
-		btnReset.setDisable(timer.isRunning());
-		lblStatus.setText(timer.isRunning() ? "Running...":"Stopped.");
+	@Override
+	public void update(Observable o, Object arg) {
+		Platform.runLater(() -> {
+			lblTime.setText(timer.getTimeString());
+			btnStart.setDisable(timer.isRunning());
+			btnStop.setDisable(!timer.isRunning());
+			btnReset.setDisable(timer.isRunning());
+			lblStatus.setText(timer.isRunning() ? "Running...":"Stopped.");
+		});
 	}
 
 }

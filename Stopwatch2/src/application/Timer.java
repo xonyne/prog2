@@ -1,18 +1,16 @@
 package application;
 
-import javafx.application.Platform;
+import java.util.Observable;
 
-public class Timer implements Runnable {
+public class Timer extends Observable implements Runnable {
 
 	private double currentTime;
 	private double startTime;
-	private Stopwatch stopwatch;
 	Thread thread;
 
-	public Timer(Stopwatch stopwatch) {	
+	public Timer() {	
 		currentTime = 0;
 		startTime=0;
-		this.stopwatch = stopwatch;
 		thread = null;
 	}
 
@@ -20,12 +18,12 @@ public class Timer implements Runnable {
 	public void run() {
 		while (true) {
 			currentTime = System.currentTimeMillis() - startTime;
-			updateGUI();
+			changed();
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				thread = null;
-				updateGUI();
+				changed();
 				break;
 			} finally{
 				
@@ -34,16 +32,6 @@ public class Timer implements Runnable {
 
 	}
 	
-	private void updateGUI(){
-		Platform.runLater(() -> {
-			stopwatch.update();
-		});
-	}
-
-	public void attach(Stopwatch stopwatch) {
-		this.stopwatch = stopwatch;
-	}
-
 	public String getTimeString() {
 		long currentTimeMilli = (long) (currentTime % 1000);
 		long currentTimeSec = (long) (currentTime / 1000);
@@ -58,17 +46,24 @@ public class Timer implements Runnable {
 	public void reset() {
 		currentTime = 0;
 		startTime = 0;
-		updateGUI();
+		changed();
 	}
 
 	public void start() {
 		currentTime = (currentTime == 0 ? startTime = System.currentTimeMillis():currentTime);
 		thread = new Thread(this);
 		thread.start();
+		changed();
 	}
 
 	public void stop() {
 		thread.interrupt();
+		changed();
+	}
+	
+	private void changed() {
+		setChanged();
+		notifyObservers();
 	}
 
 }
